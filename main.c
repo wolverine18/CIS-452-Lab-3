@@ -4,6 +4,8 @@
 #include <signal.h>
 #include <time.h>
 
+int running = 1;
+
 void sigusr1Handler(int sigNum){
 	printf("\treceived a SIGUSR1 signal\n");
 }
@@ -15,6 +17,7 @@ void sigusr2Handler(int sigNum){
 void sigintHandler(int sigNum){
 	printf("\t^C received.\n");
 	printf("That's it, I'm shutting you down...\n");
+	running = 0;
 }
 
 int main () {
@@ -32,7 +35,7 @@ int main () {
 		//gets parent pid
 		pid_t ppid = getppid();
 		
-		while(1){
+		while(running){
 			sleepTime = rand() % 5 + 1;
 			sleep(sleepTime);
 			
@@ -50,7 +53,7 @@ int main () {
 	printf("spawned child PID# %d\n", pid);
 
 	//install signal handlers
-	while(1){
+	while(running){
 		signal(SIGUSR1, sigusr1Handler);
 		signal(SIGUSR2, sigusr2Handler);
 		signal(SIGINT, sigintHandler);
