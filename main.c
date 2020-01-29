@@ -1,15 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <time.h>
+
+void sigusr1Handler(int sigNum){
+	printf("\treceived a SIGUSR1 signal\n");
+}
+
+void sigusr2Handler(int sigNum){
+	printf("\treceived a SIGUSR2 signal\n");
+}
+
+void sigintHandler(int sigNum){
+	printf("\t^C received.\n");
+	printf("That's it, I'm shutting you down...");
+}
 
 int main () {
-	int fd[2];
 	pid_t pid;
 	srand(time(NULL));
-
-	if(pipe(fd) < 0){
-		perror("Error setting up the pipe");
-		exit(1);
-	}
+	int sleepTime = 0;
 
 	if((pid = fork()) < 0){
 		perror("Error forking");
@@ -18,6 +29,8 @@ int main () {
 	//child process
 	else if(!pid){
 		//randomly generate a number from 1 to 5
+		sleepTime = rand() % 5 + 1;
+		sleep(sleepTime);
 		exit(0);
 	}
 
@@ -33,17 +46,4 @@ int main () {
 		pause();
 	}
 	return 0;
-}
-
-void sigusr1Handler(int sigNum){
-	printf("\treceived a SIGUSR1 signal\n");
-}
-
-void sigusr2Handler(int sigNum){
-	printf("\treceived a SIGUSR2 signal\n");
-}
-
-void sigintHandler(int sigNum){
-	printf("\t^C received.\n");
-	printf("That's it, I'm shutting you down...");
 }
