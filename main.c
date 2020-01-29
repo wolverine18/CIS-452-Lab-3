@@ -19,8 +19,6 @@ void sigintHandler(int sigNum){
 
 int main () {
 	pid_t pid;
-	srand(time(NULL));
-	int sleepTime = 0;
 
 	if((pid = fork()) < 0){
 		perror("Error forking");
@@ -29,9 +27,23 @@ int main () {
 	//child process
 	else if(!pid){
 		//randomly generate a number from 1 to 5
-		sleepTime = rand() % 5 + 1;
-		sleep(sleepTime);
-		exit(0);
+		int sleepTime = 0;
+		srand(time(NULL));
+		//gets parent pid
+		pid_t ppid = getppid();
+		
+		while(1){
+			sleepTime = rand() % 5 + 1;
+			sleep(sleepTime);
+			
+			if(sleepTime % 2 == 0){
+				//send SIGUSR1 signal
+				kill(SIGUSR1, ppid);
+			}else{
+				//send SIGUSR2 signal
+				kill(SIGUSR2, ppid);
+			}
+		}
 	}
 
 	//parent process
