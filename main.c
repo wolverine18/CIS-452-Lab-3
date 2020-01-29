@@ -14,7 +14,7 @@ void sigusr2Handler(int sigNum){
 
 void sigintHandler(int sigNum){
 	printf("\t^C received.\n");
-	printf("That's it, I'm shutting you down...");
+	printf("That's it, I'm shutting you down...\n");
 }
 
 int main () {
@@ -38,10 +38,10 @@ int main () {
 			
 			if(sleepTime % 2 == 0){
 				//send SIGUSR1 signal
-				kill(SIGUSR1, ppid);
+				kill(ppid, SIGUSR1);
 			}else{
 				//send SIGUSR2 signal
-				kill(SIGUSR2, ppid);
+				kill(ppid, SIGUSR2);
 			}
 		}
 	}
